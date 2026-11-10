@@ -21,6 +21,7 @@ A modular RESTful backend built with **Node.js**, **Express.js**, and **better-s
 - [Input Validation & Error Handling](#input-validation--error-handling)
 - [Search & Sorting Rules](#search--sorting-rules)
 - [Testing with Postman](#testing-with-postman)
+- [Postman API Testing Evidence](#postman-api-testing-evidence)
 
 ---
 
@@ -44,7 +45,8 @@ drone-deck/
 │   └── pilotsController.js         # Pilot CRUD operations
 ├── database/
 │   ├── database.js                 # SQLite connection & table initialization
-│   └── drone_deck.db               # SQLite database file (ignored in git)
+│   ├── drone_deck.db               # SQLite database file (ignored in git)
+│   └── seed.js                     # Sample database seed script
 ├── middleware/
 │   ├── errorHandler.js             # Centralized JSON error handler
 │   ├── notFoundHandler.js          # 404 handler for undefined routes
@@ -55,6 +57,15 @@ drone-deck/
 │   ├── assignments.js              # Assignment route definitions
 │   ├── drones.js                   # Drone route definitions
 │   └── pilots.js                   # Pilot route definitions
+├── screenshots/                    # Postman testing evidence screenshots
+│   ├── 01-root-welcome.png
+│   ├── 02-get-all-drones.png
+│   ├── 03-drone-class-search.png
+│   ├── 04-sort-drones-asc.png
+│   ├── 05-sort-drones-desc.png
+│   ├── 06-invalid-sort-field.png
+│   ├── 07-invalid-sort-order.png
+│   └── 08-class-search-and-sort.png
 ├── .env.example                    # Environment variable template
 ├── .gitignore                      # Git ignore rules (node_modules, .env, *.db)
 ├── app.js                          # Express application setup and router mounting
@@ -118,7 +129,13 @@ SQLite foreign-key enforcement is enabled via `PRAGMA foreign_keys = ON`. Tables
    PORT=3000
    ```
 
-4. **Start the server:**
+4. **Seed the database (optional):**
+   Populate initial sample pilots, drones, and assignments:
+   ```bash
+   npm run seed
+   ```
+
+5. **Start the server:**
    - Production / standard run:
      ```bash
      npm start
@@ -129,6 +146,14 @@ SQLite foreign-key enforcement is enabled via `PRAGMA foreign_keys = ON`. Tables
      ```
 
 The server will initialize the database and listen on `http://localhost:3000`.
+
+---
+
+## Available Scripts
+
+- `npm start` – Starts the Express server (`node server.js`).
+- `npm run dev` – Starts the Express server with nodemon for live reload (`nodemon server.js`).
+- `npm run seed` – Resets and populates the database with sample pilots, drones, and assignments (`node database/seed.js`).
 
 ---
 
@@ -290,3 +315,103 @@ Input validation is centralized in [`middleware/validation.js`](middleware/valid
    - **Drones** (Create, Search by Class, Sort A-Z, Sort Z-A, Sort with Class Search, Invalid Sort Test)
    - **Assignments** (Create with Foreign Keys, Read with SQL JOIN, Update, Delete)
 
+---
+
+## Postman API Testing Evidence
+
+This section presents the actual test execution evidence conducted in Postman, verifying all primary endpoints, input validation, search filtering, and whitelisted sorting behavior.
+
+### Summary of Tested Endpoints
+
+| # | Test Case / Screenshot | HTTP Method | Endpoint / Query | Purpose & Expected Behavior |
+| :---: | :--- | :---: | :--- | :--- |
+| 1 | `01-root-welcome.png` | `GET` | `/` | Confirms the Express API server is active and returns the system status payload with HTTP `200 OK`. |
+| 2 | `02-get-all-drones.png` | `GET` | `/drones` | Verifies retrieving all registered drone records from the SQLite database with HTTP `200 OK`. |
+| 3 | `03-drone-class-search.png` | `GET` | `/drones?class=Professional` | Verifies parameterized class filtering, returning only matching drones with HTTP `200 OK`. |
+| 4 | `04-sort-drones-asc.png` | `GET` | `/drones?sort=name&order=asc` | Verifies alphabetical ascending sorting (A to Z) on the whitelisted `name` field with HTTP `200 OK`. |
+| 5 | `05-sort-drones-desc.png` | `GET` | `/drones?sort=name&order=desc` | Verifies alphabetical descending sorting (Z to A) on the whitelisted `name` field with HTTP `200 OK`. |
+| 6 | `06-invalid-sort-field.png` | `GET` | `/drones?sort=colour` | Tests whitelist enforcement by rejecting unauthorized sort columns with HTTP `400 Bad Request`. |
+| 7 | `07-invalid-sort-order.png` | `GET` | `/drones?sort=name&order=invalid` | Tests sort direction validation by rejecting invalid order values with HTTP `400 Bad Request`. |
+| 8 | `08-class-search-and-sort.png` | `GET` | `/drones?class=Professional&sort=name&order=asc` | Tests combining class filtering with ascending alphabetical sorting in a single query with HTTP `200 OK`. |
+
+---
+
+### Detailed Test Screenshots
+
+#### 1. Root Welcome Endpoint
+- **HTTP Method:** `GET`
+- **Endpoint:** `/`
+- **Functionality Tested:** System health and welcome endpoint verifying that the Express application is running and accessible.
+- **Expected Behavior:** Returns status `200 OK` with JSON containing `project: "DroneDeck Club"`, `message: "Drone Management and Pilot Assignment API"`, and `status: "Running"`.
+
+![Root Welcome](screenshots/01-root-welcome.png)
+
+---
+
+#### 2. Retrieve All Drones
+- **HTTP Method:** `GET`
+- **Endpoint:** `/drones`
+- **Functionality Tested:** Retrieves the complete list of drones registered in the SQLite database without query filters.
+- **Expected Behavior:** Returns status `200 OK` with a JSON array listing all drone objects with their `id`, `name`, and `class`.
+
+![Retrieve All Drones](screenshots/02-get-all-drones.png)
+
+---
+
+#### 3. Drone Class Search
+- **HTTP Method:** `GET`
+- **Endpoint:** `/drones?class=Professional`
+- **Functionality Tested:** Parameterized query filtering on the `class` attribute (`WHERE LOWER(class) = LOWER(?)`).
+- **Expected Behavior:** Returns status `200 OK` with a filtered JSON array containing exclusively drones of class `"Professional"`.
+
+![Drone Class Search](screenshots/03-drone-class-search.png)
+
+---
+
+#### 4. Sort Drones by Name Ascending (A to Z)
+- **HTTP Method:** `GET`
+- **Endpoint:** `/drones?sort=name&order=asc`
+- **Functionality Tested:** Alphabetical ascending sorting against the whitelisted `name` field using SQL `ORDER BY name COLLATE NOCASE ASC`.
+- **Expected Behavior:** Returns status `200 OK` with drones sorted alphabetically from A to Z (`AeroScout Explorer` &rarr; `Falcon Heavy 4X` &rarr; `Phantom Glide` &rarr; `Zephyr Survey Pro`).
+
+![Sort Drones Ascending](screenshots/04-sort-drones-asc.png)
+
+---
+
+#### 5. Sort Drones by Name Descending (Z to A)
+- **HTTP Method:** `GET`
+- **Endpoint:** `/drones?sort=name&order=desc`
+- **Functionality Tested:** Alphabetical descending sorting against the whitelisted `name` field using SQL `ORDER BY name COLLATE NOCASE DESC`.
+- **Expected Behavior:** Returns status `200 OK` with drones ordered in reverse alphabetical order from Z to A (`Zephyr Survey Pro` &rarr; `Phantom Glide` &rarr; `Falcon Heavy 4X` &rarr; `AeroScout Explorer`).
+
+![Sort Drones Descending](screenshots/05-sort-drones-desc.png)
+
+---
+
+#### 6. Reject Invalid Sort Field
+- **HTTP Method:** `GET`
+- **Endpoint:** `/drones?sort=colour`
+- **Functionality Tested:** Security validation and column whitelist enforcement preventing arbitrary or injection SQL parameters.
+- **Expected Behavior:** Returns status `400 Bad Request` with exact error payload `{ "error": "Cannot sort by that field" }`.
+
+![Reject Invalid Sort Field](screenshots/06-invalid-sort-field.png)
+
+---
+
+#### 7. Reject Invalid Sort Order
+- **HTTP Method:** `GET`
+- **Endpoint:** `/drones?sort=name&order=invalid`
+- **Functionality Tested:** Input validation ensuring sort order strictly matches either `"asc"` or `"desc"`.
+- **Expected Behavior:** Returns status `400 Bad Request` with descriptive error payload `{ "error": "Invalid order value. Allowed values: asc, desc." }`.
+
+![Reject Invalid Sort Order](screenshots/07-invalid-sort-order.png)
+
+---
+
+#### 8. Combined Class Search and Name Sorting
+- **HTTP Method:** `GET`
+- **Endpoint:** `/drones?class=Professional&sort=name&order=asc`
+- **Functionality Tested:** Dual-query execution combining class search filtering with ascending alphabetical name sorting.
+- **Expected Behavior:** Returns status `200 OK` with drones filtered to class `"Professional"` and sorted alphabetically (`AeroScout Explorer` followed by `Zephyr Survey Pro`).
+
+![Combined Class Search and Name Sorting](screenshots/08-class-search-and-sort.png)
