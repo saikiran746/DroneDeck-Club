@@ -1,0 +1,482 @@
+{
+  "info": {
+    "_postman_id": "dronedeck-club-api-collection",
+    "name": "DroneDeck Club API",
+    "description": "Postman collection for DroneDeck Club – Drone Management and Pilot Assignment System (Modules 1–5)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Root & Health",
+      "item": [
+        {
+          "name": "Root Welcome Endpoint",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pilots",
+      "item": [
+        {
+          "name": "Create Pilot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Maverick\",\n  \"email\": \"maverick@topgun.com\",\n  \"phone\": \"555-0100\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pilots",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pilots"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Pilots",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pilots",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pilots"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Pilot by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pilots/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pilots",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Pilot",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pete Mitchell\",\n  \"email\": \"pete@topgun.com\",\n  \"phone\": \"555-0199\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pilots/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pilots",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Pilot",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pilots/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pilots",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Drones",
+      "item": [
+        {
+          "name": "Create Drone",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"SkyScout Pro\",\n  \"class\": \"Professional\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/drones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "drones"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Drones",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/drones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "drones"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Drones by Class",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/drones?class=Professional",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "drones"
+              ],
+              "query": [
+                {
+                  "key": "class",
+                  "value": "Professional"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Sort Drones by Name Ascending (A-Z)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/drones?sort=name&order=asc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "drones"
+              ],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "name"
+                },
+                {
+                  "key": "order",
+                  "value": "asc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Sort Drones by Name Descending (Z-A)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/drones?sort=name&order=desc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "drones"
+              ],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "name"
+                },
+                {
+                  "key": "order",
+                  "value": "desc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Class and Sort by Name Ascending",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/drones?class=Professional&sort=name&order=asc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "drones"
+              ],
+              "query": [
+                {
+                  "key": "class",
+                  "value": "Professional"
+                },
+                {
+                  "key": "sort",
+                  "value": "name"
+                },
+                {
+                  "key": "order",
+                  "value": "asc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Sort Drones Invalid Field (Expected 400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/drones?sort=colour",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "drones"
+              ],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "colour"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Drone by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/drones/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "drones",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Drone",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"SkyScout Pro Enterprise\",\n  \"class\": \"Professional\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/drones/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "drones",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Drone",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/drones/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "drones",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Assignments",
+      "item": [
+        {
+          "name": "Create Assignment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pilot_id\": 1,\n  \"drone_id\": 1,\n  \"assigned_date\": \"2026-11-10\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assignments"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Assignments (with SQL JOIN)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assignments"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Assignment by ID (with SQL JOIN)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/assignments/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assignments",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Assignment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pilot_id\": 1,\n  \"drone_id\": 1,\n  \"assigned_date\": \"2026-11-15\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/assignments/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assignments",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Assignment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/assignments/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assignments",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
