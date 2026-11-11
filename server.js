@@ -1,8 +1,9 @@
 const app = require('./app');
 require('./database/database');
 
-const PORT = process.env.PORT || 3000;
+const HOST = '0.0.0.0';
+const PORT = Number(process.env.PORT) || 3000;
 
-app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`Server is listening on http://${HOST}:${PORT}`);
 });

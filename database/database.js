@@ -1,13 +1,21 @@
+const fs = require('fs');
 const path = require('path');
 const Database = require('better-sqlite3');
 
-// Resolve path to database/drone_deck.db
-const dbPath = path.join(__dirname, 'drone_deck.db');
+// Resolve database path from DB_PATH env var or default to local database/drone_deck.db
+const configuredPath = process.env.DB_PATH && process.env.DB_PATH.trim();
+const dbPath = configuredPath
+  ? path.resolve(configuredPath)
+  : path.join(__dirname, 'drone_deck.db');
+
+// Ensure parent directory exists (required for mounted volumes or custom DB_PATH)
+fs.mkdirSync(path.dirname(dbPath), { recursive: true });
 
 // Initialize database connection
 const db = new Database(dbPath);
 
-// Enable foreign key constraints
+// Enable WAL mode for better concurrency/reliability on persistent storage and enforce foreign keys
+db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
 // Initialize tables if they do not exist
