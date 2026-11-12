@@ -430,9 +430,13 @@ This section presents the actual test execution evidence conducted in Postman, v
 
 ## Live Deployment (Railway)
 
-The **DroneDeck Club** backend is deployed live on **Railway** and publicly accessible at:
+The **DroneDeck Club** backend is deployed live on **Railway**.
 
-- **Live Base URL:** `https://dronedeck-club-production.up.railway.app`
+### Live API URL
+
+https://dronedeck-club-production.up.railway.app
+
+[Open DroneDeck Club Live API](https://dronedeck-club-production.up.railway.app)
 
 ### How to Test the Live API Using Postman
 
