@@ -22,6 +22,8 @@ A modular RESTful backend built with **Node.js**, **Express.js**, and **better-s
 - [Search & Sorting Rules](#search--sorting-rules)
 - [Testing with Postman](#testing-with-postman)
 - [Postman API Testing Evidence](#postman-api-testing-evidence)
+- [Live Deployment (Railway)](#live-deployment-railway)
+- [Live API Testing Evidence](#live-api-testing-evidence)
 
 ---
 
@@ -65,7 +67,15 @@ drone-deck/
 │   ├── 05-sort-drones-desc.png
 │   ├── 06-invalid-sort-field.png
 │   ├── 07-invalid-sort-order.png
-│   └── 08-class-search-and-sort.png
+│   ├── 08-class-search-and-sort.png
+│   ├── 09-live-root.png
+│   ├── 10-live-drone-class-search.png
+│   ├── 11-live-sort-drones-asc.png
+│   ├── 12-live-sort-drones-desc.png
+│   ├── 13-live-class-sort-asc.png
+│   ├── 14-live-sort-drones-desc.png
+│   ├── 15-live-invalid-sort-field.png
+│   └── 16-live-invalid-sort-order.png
 ├── .env.example                    # Environment variable template
 ├── .gitignore                      # Git ignore rules (node_modules, .env, *.db)
 ├── app.js                          # Express application setup and router mounting
@@ -415,3 +425,128 @@ This section presents the actual test execution evidence conducted in Postman, v
 - **Expected Behavior:** Returns status `200 OK` with drones filtered to class `"Professional"` and sorted alphabetically (`AeroScout Explorer` followed by `Zephyr Survey Pro`).
 
 ![Combined Class Search and Name Sorting](screenshots/08-class-search-and-sort.png)
+
+---
+
+## Live Deployment (Railway)
+
+The **DroneDeck Club** backend is deployed live on **Railway** and publicly accessible at:
+
+- **Live Base URL:** `https://dronedeck-club-production.up.railway.app`
+
+### How to Test the Live API Using Postman
+
+1. Open **Postman** and import [`postman/DroneDeck_Club.postman_collection.json`](postman/DroneDeck_Club.postman_collection.json) (if not already imported).
+2. Set your Postman `baseUrl` variable (either in the collection variables or a new environment) to:
+   ```text
+   https://dronedeck-club-production.up.railway.app
+   ```
+   *(You can also send requests directly to `https://dronedeck-club-production.up.railway.app/...` without an environment.)*
+3. Send `GET` requests to verify the live endpoints (for example, `GET {{baseUrl}}/`, `GET {{baseUrl}}/drones?class=Professional`, `GET {{baseUrl}}/drones?sort=name&order=asc`).
+
+### Expected HTTP Status Codes
+
+- **`200 OK` (Successful Requests):**
+  - Returned for valid `GET` requests, including the root welcome endpoint (`GET /`), class-filtered drone searches (`GET /drones?class=Professional`), valid ascending/descending name sorting (`GET /drones?sort=name&order=asc` and `order=desc`), and combined class search with sorting (`GET /drones?class=Professional&sort=name&order=asc`).
+- **`400 Bad Request` (Invalid Sorting Requests):**
+  - **Unsupported Sort Field:** Supplying any field other than `name` (such as `GET /drones?sort=colour`) is rejected by the sort-field whitelist with `400 Bad Request` and `{"error": "Cannot sort by that field"}`.
+  - **Invalid Sort Order:** Supplying an order value other than `asc` or `desc` (such as `GET /drones?sort=name&order=wrong`) is rejected with `400 Bad Request` and `{"error": "Invalid order value. Allowed values: asc, desc."}`.
+
+---
+
+## Live API Testing Evidence
+
+The screenshots below document live verification against `https://dronedeck-club-production.up.railway.app` (covering the root endpoint and `GET /drones` search, sorting, and invalid-sorting checks; other endpoints not shown below were not part of this live test run).
+
+### Summary of Live Tested Endpoints
+
+| # | Screenshot | HTTP Method | Live Endpoint / Query | Expected Status & Purpose |
+| :---: | :--- | :---: | :--- | :--- |
+| 9 | `09-live-root.png` | `GET` | `/` | `200 OK` — Confirms the live Railway deployment responds with the welcome JSON. |
+| 10 | `10-live-drone-class-search.png` | `GET` | `/drones?class=Professional` | `200 OK` — Filters live drones by class `Professional`. |
+| 11 | `11-live-sort-drones-asc.png` | `GET` | `/drones?sort=name&order=asc` | `200 OK` — Sorts live drones by `name` in ascending order (`asc`). |
+| 12 | `12-live-sort-drones-desc.png` | `GET` | `/drones?sort=name&order=desc` | `200 OK` — Sorts live drones by `name` in descending order (`desc`). |
+| 13 | `13-live-class-sort-asc.png` | `GET` | `/drones?class=Professional&sort=name&order=asc` | `200 OK` — Combines `class=Professional` filtering with `name` ascending sort. |
+| 14 | `14-live-sort-drones-desc.png` | `GET` | `/drones?sort=name&order=desc` | `200 OK` — Verifies Z-to-A descending order across multiple live drone records (`SkyScout Pro` &rarr; `AeroScout`). |
+| 15 | `15-live-invalid-sort-field.png` | `GET` | `/drones?sort=colour` | `400 Bad Request` — Rejects unsupported sort field with `"Cannot sort by that field"`. |
+| 16 | `16-live-invalid-sort-order.png` | `GET` | `/drones?sort=name&order=wrong` | `400 Bad Request` — Rejects invalid order value with `"Invalid order value. Allowed values: asc, desc."`. |
+
+---
+
+#### 9. Live Root Welcome Endpoint
+- **HTTP Method:** `GET`
+- **Endpoint:** `https://dronedeck-club-production.up.railway.app/`
+- **Functionality Tested:** Confirms the deployed Railway service is reachable and serving the root welcome response.
+- **Expected & Observed Behavior:** Returns `200 OK` with `{"project": "DroneDeck Club", "message": "Drone Management and Pilot Assignment API", "status": "Running"}`.
+
+![Live Root Endpoint](screenshots/09-live-root.png)
+
+---
+
+#### 10. Live Drone Class Search
+- **HTTP Method:** `GET`
+- **Endpoint:** `{{baseUrl}}/drones?class=Professional`
+- **Functionality Tested:** Filters drone records on the live Railway database by `class=Professional`.
+- **Expected & Observed Behavior:** Returns `200 OK` with matching `"Professional"` drone records.
+
+![Live Drone Class Search](screenshots/10-live-drone-class-search.png)
+
+---
+
+#### 11. Live Sort Drones by Name Ascending
+- **HTTP Method:** `GET`
+- **Endpoint:** `{{baseUrl}}/drones?sort=name&order=asc`
+- **Functionality Tested:** Applies whitelisted ascending alphabetical sorting (`sort=name&order=asc`) against the live API.
+- **Expected & Observed Behavior:** Returns `200 OK` with the sorted drone array.
+
+![Live Sort Drones Ascending](screenshots/11-live-sort-drones-asc.png)
+
+---
+
+#### 12. Live Sort Drones by Name Descending
+- **HTTP Method:** `GET`
+- **Endpoint:** `{{baseUrl}}/drones?sort=name&order=desc`
+- **Functionality Tested:** Applies whitelisted descending alphabetical sorting (`sort=name&order=desc`) against the live API.
+- **Expected & Observed Behavior:** Returns `200 OK` with the sorted drone array.
+
+![Live Sort Drones Descending](screenshots/12-live-sort-drones-desc.png)
+
+---
+
+#### 13. Live Combined Class Search and Name Sorting (Ascending)
+- **HTTP Method:** `GET`
+- **Endpoint:** `{{baseUrl}}/drones?class=Professional&sort=name&order=asc`
+- **Functionality Tested:** Combines `class=Professional` filtering with ascending `name` sorting in a single live query.
+- **Expected & Observed Behavior:** Returns `200 OK` with matching `"Professional"` drones sorted alphabetically A to Z.
+
+![Live Class Search and Sort Ascending](screenshots/13-live-class-sort-asc.png)
+
+---
+
+#### 14. Live Sort Drones Descending (Multi-Record Verification)
+- **HTTP Method:** `GET`
+- **Endpoint:** `{{baseUrl}}/drones?sort=name&order=desc`
+- **Functionality Tested:** Verifies Z-to-A descending sort order on the live Railway deployment with multiple drone records present.
+- **Expected & Observed Behavior:** Returns `200 OK` with `"SkyScout Pro"` ordered before `"AeroScout"`.
+
+![Live Sort Drones Descending Multiple Records](screenshots/14-live-sort-drones-desc.png)
+
+---
+
+#### 15. Live Reject Invalid Sort Field
+- **HTTP Method:** `GET`
+- **Endpoint:** `{{baseUrl}}/drones?sort=colour`
+- **Functionality Tested:** Verifies sort-field whitelist enforcement on the live deployment when an unsupported field (`colour`) is supplied.
+- **Expected & Observed Behavior:** Returns `400 Bad Request` with `{"error": "Cannot sort by that field"}`.
+
+![Live Invalid Sort Field](screenshots/15-live-invalid-sort-field.png)
+
+---
+
+#### 16. Live Reject Invalid Sort Order
+- **HTTP Method:** `GET`
+- **Endpoint:** `{{baseUrl}}/drones?sort=name&order=wrong`
+- **Functionality Tested:** Verifies sort-order validation on the live deployment when an invalid order value (`wrong`) is supplied.
+- **Expected & Observed Behavior:** Returns `400 Bad Request` with `{"error": "Invalid order value. Allowed values: asc, desc."}`.
+
+![Live Invalid Sort Order](screenshots/16-live-invalid-sort-order.png)
